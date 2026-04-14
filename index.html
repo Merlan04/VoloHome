@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VOLO HOME — Комфорт 5-звёздочного отеля у вас дома</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --dark: #1E1E1E;
+      --orange: #E87722;
+      --orange-dark: #CC6600;
+      --white: #FFFFFF;
+      --card-dark: #2C2C2C;
+      --gray-bg: #F5F5F5;
+      --muted: #888888;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'Manrope', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--gray-bg);
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+
+    /* ──────────────── ANIMATIONS ──────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(-50px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideLeft {
+      from { opacity: 0; transform: translateX(50px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes barSlide {
+      from { transform: translateX(-100%); }
+      to   { transform: translateX(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(232,119,34,0.4); }
+      50%       { box-shadow: 0 0 0 12px rgba(232,119,34,0); }
+    }
+    @keyframes navDrop {
+      from { transform: translateY(-100%); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    @keyframes floatBadge {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-6px); }
+    }
+    @keyframes popupIn {
+      from { opacity: 0; transform: scale(0.85) translateY(30px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes overlayFade {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* Observe-based reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s cubic-bezier(.22,1,.36,1), transform 0.7s cubic-bezier(.22,1,.36,1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: opacity 0.7s cubic-bezier(.22,1,.36,1), transform 0.7s cubic-bezier(.22,1,.36,1);
+    }
+    .reveal-left.visible { opacity: 1; transform: none; }
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: opacity 0.7s cubic-bezier(.22,1,.36,1), transform 0.7s cubic-bezier(.22,1,.36,1);
+    }
+    .reveal-right.visible { opacity: 1; transform: none; }
+    .delay-1 { transition-delay: 0.1s !important; }
+    .delay-2 { transition-delay: 0.2s !important; }
+    .delay-3 { transition-delay: 0.3s !important; }
+    .delay-4 { transition-delay: 0.4s !important; }
+
+    /* ──────────────── PROMO BAR ──────────────── */
+    .promo-bar {
+      background: var(--orange-dark);
+      padding: 10px 40px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.3px;
+      animation: barSlide 0.6s ease both;
+    }
+    .promo-bar span { opacity: 0.75; margin: 0 10px; }
+
+    /* ──────────────── NAV ──────────────── */
+    nav {
+      background: var(--dark);
+      padding: 0 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      animation: navDrop 0.5s ease 0.2s both;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .logo {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: 1px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .logo em { color: var(--orange); font-style: normal; }
+    .logo sup {
+      font-size: 9px;
+      font-family: var(--sans);
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-left: 2px;
+      margin-top: -8px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: #aaa;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      position: relative;
+      transition: color 0.25s;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--orange);
+      transition: width 0.25s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      background: var(--orange);
+      color: #fff !important;
+      padding: 10px 22px;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: background 0.2s, transform 0.15s;
+      text-decoration: none;
+    }
+    .nav-cta:hover { background: #d46a1a; transform: scale(1.04); }
+
+    /* ──────────────── HERO ──────────────── */
+    .hero {
+      background: var(--dark);
+      padding: 80px 60px 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      min-height: 580px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(232,119,34,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--orange-dark);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 5px 12px;
+      letter-spacing: 1.5px;
+      margin-bottom: 24px;
+      animation: fadeIn 0.6s ease 0.4s both;
+    }
+    .hero-badge::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: #fff;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: 42px;
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 20px;
+      animation: slideRight 0.8s cubic-bezier(.22,1,.36,1) 0.5s both;
+    }
+    .hero h1 em {
+      color: var(--orange);
+      font-style: normal;
+      position: relative;
+    }
+    .hero-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 24px;
+      animation: fadeUp 0.7s ease 0.7s both;
+    }
+    .hero-list {
+      list-style: none;
+      margin-bottom: 36px;
+      animation: fadeUp 0.7s ease 0.8s both;
+    }
+    .hero-list li {
+      font-size: 13px;
+      color: #ccc;
+      padding: 7px 0 7px 22px;
+      position: relative;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: color 0.2s;
+    }
+    .hero-list li:hover { color: #fff; }
+    .hero-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      background: var(--orange);
+      border-radius: 50%;
+    }
+    .hero-btns {
+      display: flex;
+      gap: 14px;
+      animation: fadeUp 0.7s ease 0.95s both;
+    }
+    .btn-primary {
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      padding: 14px 28px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.4px;
+      font-family: var(--sans);
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      background: #d46a1a;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(232,119,34,0.35);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.3);
+      padding: 14px 28px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: border-color 0.2s, color 0.2s, transform 0.15s;
+    }
+    .btn-secondary:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+      transform: translateY(-2px);
+    }
+
+    /* Hero image */
+    .hero-visual {
+      position: relative;
+      animation: slideLeft 0.9s cubic-bezier(.22,1,.36,1) 0.5s both;
+      align-self: flex-end;
+    }
+    .hero-img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      display: block;
+    }
+    .hero-float-badge {
+      position: absolute;
+      bottom: 28px;
+      left: -24px;
+      background: var(--orange);
+      color: #fff;
+      padding: 14px 20px;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.4;
+      animation: floatBadge 3s ease-in-out infinite;
+      box-shadow: 0 12px 32px rgba(232,119,34,0.5);
+    }
+    .hero-float-badge strong { font-size: 20px; display: block; }
+
+    /* ──────────────── STATS ──────────────── */
+    .stats-row {
+      background: var(--dark);
+      border-top: 1px solid #2a2a2a;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .stat-item {
+      padding: 28px 40px;
+      border-right: 1px solid #2a2a2a;
+      transition: background 0.25s;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-item:hover { background: #242424; }
+    .stat-num {
+      font-family: var(--serif);
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--orange);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 5px;
+      font-weight: 500;
+    }
+
+    /* ──────────────── SECTION COMMON ──────────────── */
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 36px;
+    }
+    .section-eyebrow {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--orange);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-size: 30px;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+    .section-title.white { color: var(--white); }
+    .section-title.dark  { color: var(--dark); }
+    .see-all-btn {
+      background: none;
+      border: none;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--orange);
+      cursor: pointer;
+      font-family: var(--sans);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: gap 0.2s;
+      text-decoration: none;
+    }
+    .see-all-btn:hover { gap: 12px; }
+
+    /* ──────────────── CARDS ──────────────── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.35s cubic-bezier(.22,1,.36,1), box-shadow 0.35s;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
+    .card-dark { background: var(--card-dark); }
+    .card-light { background: #fff; border: 1px solid #eee; }
+    .card-promo { background: #fff; border: 1px solid #f0e0d0; }
+
+    .card-img-wrap {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+    }
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s cubic-bezier(.22,1,.36,1);
+    }
+    .card:hover .card-img-wrap img { transform: scale(1.07); }
+    .card-tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: var(--orange);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 10px;
+      letter-spacing: 0.5px;
+      z-index: 2;
+    }
+    .card-tag.accent { background: var(--orange-dark); }
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%);
+    }
+
+    .card-body { padding: 18px; }
+    .card-name {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .card-name.white { color: var(--white); }
+    .card-name.dark  { color: var(--dark); }
+    .card-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .card-price {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--orange);
+      margin-bottom: 14px;
+    }
+    .btn-card {
+      width: 100%;
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      padding: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--sans);
+      letter-spacing: 0.5px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-card:hover { background: #d46a1a; transform: scale(0.98); }
+    .btn-card.outline {
+      background: transparent;
+      border: 1.5px solid var(--orange);
+      color: var(--orange);
+    }
+    .btn-card.outline:hover { background: var(--orange); color: #fff; }
+
+    /* ──────────────── SECTIONS WRAPPER ──────────────── */
+    .sec { padding: 70px 60px; }
+    .sec-dark { background: var(--dark); }
+    .sec-light { background: var(--white); }
+    .sec-gray  { background: var(--gray-bg); }
+
+    /* ──────────────── ABOUT ──────────────── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .about-img-wrap {
+      position: relative;
+    }
+    .about-img {
+      width: 100%;
+      height: 480px;
+      object-fit: cover;
+      display: block;
+    }
+    .about-accent {
+      position: absolute;
+      bottom: -20px;
+      right: -20px;
+      background: var(--orange);
+      color: #fff;
+      padding: 24px 28px;
+      font-weight: 900;
+      text-align: center;
+    }
+    .about-accent strong { font-size: 36px; font-family: var(--serif); display: block; line-height: 1; }
+    .about-accent span { font-size: 11px; font-weight: 600; opacity: 0.85; letter-spacing: 0.5px; }
+    .about-text p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.85;
+      margin-bottom: 18px;
+    }
+    .about-list { list-style: none; margin-bottom: 32px; }
+    .about-list li {
+      font-size: 14px;
+      color: #ccc;
+      padding: 10px 0 10px 24px;
+      position: relative;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .about-list li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--orange);
+      font-weight: 700;
+    }
+    .about-stats-mini {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .astat {
+      background: #2C2C2C;
+      padding: 22px 20px;
+      border-left: 3px solid var(--orange);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .astat:hover { background: #333; transform: translateX(4px); }
+    .astat-num {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--orange);
+    }
+    .astat-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    /* ──────────────── FORM ──────────────── */
+    .form-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .form-inner {
+      background: var(--white);
+      padding: 48px;
+      border-top: 4px solid var(--orange);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.08);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 7px;
+      letter-spacing: 0.3px;
+    }
+    .field input,
+    .field select {
+      width: 100%;
+      background: #fafafa;
+      border: 1.5px solid #e0e0e0;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: var(--dark);
+      font-family: var(--sans);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(232,119,34,0.12);
+      background: #fff;
+    }
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--orange);
+      pointer-events: none;
+      font-size: 12px;
+    }
+    .btn-submit {
+      width: 100%;
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      padding: 17px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: var(--sans);
+      letter-spacing: 0.5px;
+      margin-top: 8px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-submit:hover {
+      background: #d46a1a;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(232,119,34,0.4);
+    }
+    .form-note {
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 14px;
+    }
+
+    /* ──────────────── FOOTER ──────────────── */
+    footer {
+      background: #141414;
+      padding: 50px 60px 24px;
+      border-top: 3px solid var(--orange);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 36px;
+    }
+    .footer-brand-logo {
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--white);
+      margin-bottom: 14px;
+      display: block;
+    }
+    .footer-brand-logo em { color: var(--orange); font-style: normal; }
+    .footer-brand p {
+      font-size: 12px;
+      color: #555;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+    .footer-socials { display: flex; gap: 10px; }
+    .social-btn {
+      width: 34px;
+      height: 34px;
+      background: #2C2C2C;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--muted);
+      transition: background 0.2s, color 0.2s;
+      text-decoration: none;
+    }
+    .social-btn:hover { background: var(--orange); color: #fff; }
+    .footer-col h4 {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--orange);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .footer-col a {
+      display: block;
+      font-size: 13px;
+      color: #666;
+      text-decoration: none;
+      margin-bottom: 10px;
+      transition: color 0.2s, padding-left 0.2s;
+    }
+    .footer-col a:hover { color: #fff; padding-left: 6px; }
+    .footer-bottom {
+      border-top: 1px solid #222;
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-bottom p { font-size: 11px; color: #444; }
+    .footer-bottom em {
+      font-style: normal;
+      color: var(--orange);
+      font-weight: 700;
+      font-size: 11px;
+    }
+
+    /* ──────────────── POPUP ──────────────── */
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      pointer-events: none;
+      transition: background 0.3s;
+    }
+    .popup-overlay.active {
+      background: rgba(0,0,0,0.8);
+      pointer-events: all;
+      animation: overlayFade 0.3s ease;
+    }
+    .popup-box {
+      background: var(--dark);
+      border-top: 4px solid var(--orange);
+      padding: 42px;
+      max-width: 460px;
+      width: 90%;
+      position: relative;
+      opacity: 0;
+      transform: scale(0.85) translateY(30px);
+      transition: opacity 0.35s cubic-bezier(.22,1,.36,1), transform 0.35s cubic-bezier(.22,1,.36,1);
+    }
+    .popup-overlay.active .popup-box {
+      opacity: 1;
+      transform: none;
+    }
+    .popup-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 22px;
+      cursor: pointer;
+      transition: color 0.2s, transform 0.2s;
+      line-height: 1;
+    }
+    .popup-close:hover { color: var(--orange); transform: rotate(90deg); }
+    .popup-eyebrow {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--orange);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .popup-box h3 {
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--white);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+    .popup-box p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .btn-popup {
+      width: 100%;
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      padding: 16px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: var(--sans);
+      letter-spacing: 0.3px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-popup:hover {
+      background: #d46a1a;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(232,119,34,0.4);
+    }
+    .popup-features {
+      margin: 0 0 24px;
+      list-style: none;
+    }
+    .popup-features li {
+      font-size: 12px;
+      color: #aaa;
+      padding: 5px 0;
+      padding-left: 18px;
+      position: relative;
+    }
+    .popup-features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--orange);
+      font-weight: 700;
+    }
+
+    /* ──────────────── DIVIDER ──────────────── */
+    .orange-divider {
+      height: 4px;
+      background: linear-gradient(to right, var(--orange), var(--orange-dark));
+    }
+
+    /* ──────────────── TRUST STRIP ──────────────── */
+    .trust-strip {
+      background: var(--orange);
+      padding: 18px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+    }
+    .trust-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .trust-text strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .trust-text span {
+      font-size: 11px;
+      opacity: 0.8;
+    }
+    .trust-sep {
+      width: 1px;
+      height: 40px;
+      background: rgba(255,255,255,0.25);
+    }
+  </style>
+</head>
+<body>
+
+<!-- PROMO BAR -->
+<div class="promo-bar">
+  🎁 Бесплатная профессиональная чистка матраса 1 раз в год при покупке
+  <span>·</span>
+  Доставка по Ташкенту — 0 сум
+  <span>·</span>
+  Официальная гарантия на каждый товар
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">VOLO <em>HOME</em><sup>UZ</sup></a>
+  <ul class="nav-links">
+    <li><a href="#mattresses">Матрасы</a></li>
+    <li><a href="#beds">Кровати</a></li>
+    <li><a href="#promos">Акции</a></li>
+    <li><a href="#about">О нас</a></li>
+    <li><a href="#form" class="nav-cta">Контакты</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════ BLOCK 1: HERO ══════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">SINCE 2019 · VOLO.UZ</div>
+    <h1>Обеспечиваем комфорт <em>5-звёздочного отеля</em> у вас дома вместе с VOLO!</h1>
+    <p class="hero-desc">
+      Первая компания в Узбекистане, которая представляет кровати и матрасы отдельно, в профессиональном формате.
+    </p>
+    <ul class="hero-list">
+      <li>Первыми в Узбекистане наладили доставку вакуумных матрасов</li>
+      <li>Доставка по городу Ташкент — абсолютно бесплатно</li>
+      <li>На каждый товар — официальный гарантийный срок</li>
+      <li>Бесплатная профессиональная чистка — 1 раз в год!</li>
+    </ul>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="scrollTo('#mattresses')">Смотреть каталог</button>
+      <button class="btn-secondary" onclick="openPopup('consult')">Консультация</button>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <img
+      class="hero-img"
+      src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80"
+      alt="Роскошная спальня VOLO HOME"
+    />
+    <div class="hero-float-badge">
+      <strong>5★</strong>
+      Гостиничный комфорт
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-row">
+  <div class="stat-item reveal delay-1">
+    <div class="stat-num">1000+</div>
+    <div class="stat-label">Довольных домов</div>
+  </div>
+  <div class="stat-item reveal delay-2">
+    <div class="stat-num">50+</div>
+    <div class="stat-label">Отелей HORECA</div>
+  </div>
+  <div class="stat-item reveal delay-3">
+    <div class="stat-num">6 лет</div>
+    <div class="stat-label">На рынке</div>
+  </div>
+  <div class="stat-item reveal delay-4">
+    <div class="stat-num">0 сум</div>
+    <div class="stat-label">Доставка по Ташкенту</div>
+  </div>
+</div>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip reveal">
+  <div class="trust-item">
+    <div class="trust-icon">🚚</div>
+    <div class="trust-text"><strong>Бесплатная доставка</strong><span>По всему Ташкенту</span></div>
+  </div>
+  <div class="trust-sep"></div>
+  <div class="trust-item">
+    <div class="trust-icon">🛡️</div>
+    <div class="trust-text"><strong>Официальная гарантия</strong><span>На каждый товар</span></div>
+  </div>
+  <div class="trust-sep"></div>
+  <div class="trust-item">
+    <div class="trust-icon">✨</div>
+    <div class="trust-text"><strong>Бесплатная чистка</strong><span>1 раз в год</span></div>
+  </div>
+  <div class="trust-sep"></div>
+  <div class="trust-item">
+    <div class="trust-icon">📦</div>
+    <div class="trust-text"><strong>Вакуумная упаковка</strong><span>Гигиенично и удобно</span></div>
+  </div>
+</div>
+
+<!-- ══════════ BLOCK 2: MATTRESSES ══════════ -->
+<section class="sec sec-dark" id="mattresses">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-eyebrow">Каталог</div>
+      <h2 class="section-title white">Матрасы</h2>
+    </div>
+    <a class="see-all-btn" href="#">Смотреть все →</a>
+  </div>
+  <div class="cards-grid">
+    <div class="card card-dark reveal delay-1">
+      <div class="card-img-wrap">
+        <div class="card-tag">ХИТ</div>
+        <div class="card-overlay"></div>
+        <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80" alt="Матрас Comfort Pro" />
+      </div>
+      <div class="card-body">
+        <div class="card-name white">Comfort Pro</div>
+        <div class="card-sub">Независимые пружины · 160×200 · Средняя жёсткость</div>
+        <div class="card-price">от 4 500 000 сум</div>
+        <button class="btn-card" onclick="openPopup('mattress')">Подробнее</button>
+      </div>
+    </div>
+    <div class="card card-dark reveal delay-2">
+      <div class="card-img-wrap">
+        <div class="card-overlay"></div>
+        <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80" alt="Матрас Ortho Sleep" />
+      </div>
+      <div class="card-body">
+        <div class="card-name white">Ortho Sleep</div>
+        <div class="card-sub">Ортопедический · Любой размер · Жёсткий</div>
+        <div class="card-price">от 6 200 000 сум</div>
+        <button class="btn-card" onclick="openPopup('mattress')">Подробнее</button>
+      </div>
+    </div>
+    <div class="card card-dark reveal delay-3">
+      <div class="card-img-wrap">
+        <div class="card-tag">NEW</div>
+        <div class="card-overlay"></div>
+        <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?w=600&q=80" alt="Матрас Volo Latex" />
+      </div>
+      <div class="card-body">
+        <div class="card-name white">Volo Latex</div>
+        <div class="card-sub">Натуральный латекс · Premium · Гипоаллергенный</div>
+        <div class="card-price">от 9 800 000 сум</div>
+        <button class="btn-card" onclick="openPopup('mattress')">Подробнее</button>
+      </div>
+    </div>
+    <div class="card card-dark reveal delay-4">
+      <div class="card-img-wrap">
+        <div class="card-tag accent">HORECA</div>
+        <div class="card-overlay"></div>
+        <img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=600&q=80" alt="Матрас Hotel Edition" />
+      </div>
+      <div class="card-body">
+        <div class="card-name white">Hotel Edition</div>
+        <div class="card-sub">Для отелей · Оптом и в розницу · Сертифицирован</div>
+        <div class="card-price">от 3 200 000 сум</div>
+        <button class="btn-card" onclick="openPopup('mattress')">Подробнее</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="orange-divider"></div>
+
+<!-- ══════════ BLOCK 3: BEDS ══════════ -->
+<section class="sec sec-light" id="beds">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-eyebrow">Каталог</div>
+      <h2 class="section-title dark">Кровати</h2>
+    </div>
+    <a class="see-all-btn" href="#">Смотреть все →</a>
+  </div>
+  <div class="cards-grid">
+    <div class="card card-light reveal delay-1">
+      <div class="card-img-wrap">
+        <div class="card-tag">ХИТ</div>
+        <div class="card-overlay"></div>
+        <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&q=80" alt="Кровать Luxe Frame" />
+      </div>
+      <div class="card-body">
+        <div class="card-name dark">Luxe Frame</div>
+        <div class="card-sub">Мягкое изголовье · Велюр · 160×200</div>
+        <div class="card-price">от 7 900 000 сум</div>
+        <button class="btn-card" onclick="openPopup('bed')">Подробнее</button>
+      </div>
+    </div>
+    <div class="card card-light reveal delay-2">
+      <div class="card-img-wrap">
+        <div class="card-overlay"></div>
+        <img src="https://images.unsplash.com/photo-1588046130717-0eb0c9a3ba15?w=600&q=80" alt="Кровать Classic Wood" />
+      </div>
+      <div class="card-body">
+        <div class="card-name dark">Classic Wood</div>
+        <div class="card-sub">Натуральное дерево · Минимализм · Экологично</div>
+        <div class="card-price">от 5 500 000 сум</div>
+        <button class="btn-card" onclick="openPopup('bed')">Подробнее</button>
+      </div>
+    </div>
+    <div class="card card-light reveal delay-3">
+      <div class="card-img-wrap">
+        <div class="card-tag">NEW</div>
+        <div class="card-overlay"></div>
+        <img src="https://images.unsplash.com/photo-1592229505726-ca121723b8ef?w=600&q=80" alt="Кровать Hotel Pro" />
+      </div>
+      <div class="card-body">
+        <div class="card-name dark">Hotel Pro</div>
+        <div class="card-sub">Гостиничный стандарт 5★ · Люкс исполнение</div>
+        <div class="card-price">от 12 000 000 сум</div>
+        <button class="btn-card" onclick="openPopup('bed')">Подробнее</button>
+      </div>
+    </div>
+    <div class="card card-light reveal delay-4">
+      <div class="card-img-wrap">
+        <div class="card-overlay"></div>
+        <img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=600&q=80" alt="Кровать Storage Bed" />
+      </div>
+      <div class="card-body">
+        <div class="card-name dark">Storage Bed</div>
+        <div class="card-sub">Подъёмный механизм · Вместительный ящик</div>
+        <div class="card-price">от 8 400 000 сум</div>
+        <button class="btn-card" onclick="openPopup('bed')">Подробнее</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="orange-divider"></div>
+
+<!-- ══════════ BLOCK 4: PROMOS ══════════ -->
+<section class="sec sec-gray" id="promos">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-eyebrow">Специальные предложения</div>
+      <h2 class="section-title dark">Акции и Наборы</h2>
+    </div>
+    <a class="see-all-btn" href="#">Смотреть все →</a>
+  </div>
+  <div class="cards-grid">
+    <div class="card card-promo reveal delay-1">
+      <div class="card-img-wrap">
+        <div class="card-tag" style="background:#CC6600;">−20%</div>
+        <div class="card-overlay"></div>
+        <img src="https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=600&q=80" alt="Набор Старт" />
+      </div>
+      <div class="card-body">
+        <div class="card-name dark">Набор «Старт»</div>
+        <div class="card-sub">Кровать Classic + Матрас Comfort · Сэкономьте 2 800 000 сум</div>
+        <div class="card-price">11 200 000 сум</div>
+        <button class="btn-card" onclick="openPopup('promo')">Подробнее</button>
+      </div>
+    </div>
+    <div class="card card-promo reveal delay-2">
+      <div class="card-img-wrap">
+        <div class="card-tag" style="background:#CC6600;">−25%</div>
+        <div class="card-overlay"></div>
+        <img src="https://images.unsplash.com/photo-1567016432779-094069958ea5?w=600&q=80" alt="Набор Премиум" />
+      </div>
+      <div class="card-body">
+        <div class="card-name dark">Набор «Премиум»</div>
+        <div class="card-sub">Кровать Luxe + Матрас Latex · Топовое качество</div>
+        <div class="card-price">18 500 000 сум</div>
+        <button class="btn-card" onclick="openPopup('promo')">Подробнее</button>
+      </div>
+    </div>
+    <div class="card card-promo reveal delay-3">
+      <div class="card-img-wrap">
+        <div class="card-tag" style="background:#CC6600;">−15%</div>
+        <div class="card-overlay"></div>
+        <img src="https://images.unsplash.com/photo-1489171078254-c3365d6e359f?w=600&q=80" alt="Набор Семейный" />
+      </div>
+      <div class="card-body">
+        <div class="card-name dark">Набор «Семейный»</div>
+        <div class="card-sub">2 матраса + доставка + чистка в подарок</div>
+        <div class="card-price">8 900 000 сум</div>
+        <button class="btn-card" onclick="openPopup('promo')">Подробнее</button>
+      </div>
+    </div>
+    <div class="card card-promo reveal delay-4">
+      <div class="card-img-wrap">
+        <div class="card-tag accent">HORECA</div>
+        <div class="card-overlay"></div>
+        <img src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=600&q=80" alt="Набор Отель" />
+      </div>
+      <div class="card-body">
+        <div class="card-name dark">Набор «Отель»</div>
+        <div class="card-sub">Комплект для гостиниц · Оптовые условия · Монтаж</div>
+        <div class="card-price">по запросу</div>
+        <button class="btn-card" onclick="openPopup('promo')">Подробнее</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ BLOCK 5: ABOUT ══════════ -->
+<section class="sec sec-dark" id="about">
+  <div class="about-grid">
+    <div class="about-img-wrap reveal-left">
+      <img
+        class="about-img"
+        src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80"
+        alt="О компании VOLO HOME"
+      />
+      <div class="about-accent">
+        <strong>6</strong>
+        <span>лет на рынке</span>
+      </div>
+    </div>
+    <div class="about-text reveal-right">
+      <div class="section-eyebrow">О компании</div>
+      <h2 class="section-title white" style="margin-bottom:20px;">Вот уже 6 лет мы создаём собственные стандарты на мебельном рынке Узбекистана</h2>
+      <p>Мы являемся ведущими специалистами не только в области кроватей и матрасов, но и в сфере современных диванов, кресел и гостиничной мебели.</p>
+      <ul class="about-list">
+        <li>Привнесли качественный сон и уют в более чем 1 000 домов по всему Узбекистану</li>
+        <li>Завоевали доверие более 50 крупных отелей HORECA с матрасами премиум-класса</li>
+        <li>Первыми в Узбекистане наладили доставку вакуумных матрасов</li>
+        <li>Официальная гарантия на каждый реализуемый товар</li>
+      </ul>
+      <div class="about-stats-mini">
+        <div class="astat">
+          <div class="astat-num">1000+</div>
+          <div class="astat-label">Довольных домов по всему Узбекистану</div>
+        </div>
+        <div class="astat">
+          <div class="astat-num">50+</div>
+          <div class="astat-label">Отелей и объектов HORECA</div>
+        </div>
+        <div class="astat">
+          <div class="astat-num">6 лет</div>
+          <div class="astat-label">На мебельном рынке страны</div>
+        </div>
+        <div class="astat">
+          <div class="astat-num">0 сум</div>
+          <div class="astat-label">Стоимость доставки по Ташкенту</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ BLOCK 6: FORM ══════════ -->
+<section class="sec sec-gray" id="form">
+  <div class="form-wrap">
+    <div style="text-align:center;margin-bottom:36px;" class="reveal">
+      <div class="section-eyebrow" style="justify-content:center;">Получить консультацию</div>
+      <h2 class="section-title dark" style="margin-bottom:12px;">Подберём идеальный вариант именно для вас</h2>
+      <p style="font-size:14px;color:var(--muted);line-height:1.7;">Заполните форму, и мы предложим лучший вариант, соответствующий вашим потребностям.</p>
+    </div>
+    <div class="form-inner reveal">
+      <div class="form-row">
+        <div class="field">
+          <label>Ваше имя</label>
+          <input type="text" placeholder="Например: Алишер" />
+        </div>
+        <div class="field">
+          <label>Номер телефона</label>
+          <input type="tel" placeholder="+998 __ — __ — __" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Что вас интересует?</label>
+          <div class="select-wrap">
+            <select>
+              <option value="">Выберите...</option>
+              <option>Кровать</option>
+              <option>Матрас</option>
+              <option>Оба варианта</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Для кого покупаете?</label>
+          <div class="select-wrap">
+            <select>
+              <option value="">Выберите...</option>
+              <option>Для себя</option>
+              <option>Для родителей</option>
+              <option>Для детей</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Предполагаемый бюджет</label>
+        <div class="select-wrap">
+          <select>
+            <option value="">Выберите бюджет...</option>
+            <option>От 3 000 000 до 7 000 000 сум</option>
+            <option>От 7 000 000 до 15 000 000 сум</option>
+            <option>Свыше 15 000 000 сум</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-submit">Отправить данные →</button>
+      <p class="form-note">Мы свяжемся с вами в течение 30 минут в рабочее время</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="footer-brand-logo">VOLO <em>HOME</em></span>
+      <p>Первая компания в Узбекистане, представляющая кровати и матрасы отдельно, в профессиональном формате. Комфорт 5-звёздочного отеля у вас дома.</p>
+      <div class="footer-socials">
+        <a class="social-btn" href="#" title="Instagram">▲</a>
+        <a class="social-btn" href="#" title="Telegram">✈</a>
+        <a class="social-btn" href="#" title="Facebook">f</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Каталог</h4>
+      <a href="#mattresses">Матрасы</a>
+      <a href="#beds">Кровати</a>
+      <a href="#promos">Акции</a>
+      <a href="#">Диваны</a>
+      <a href="#">Кресла</a>
+    </div>
+    <div class="footer-col">
+      <h4>Компания</h4>
+      <a href="#about">О нас</a>
+      <a href="#">Гарантия</a>
+      <a href="#">Доставка</a>
+      <a href="#">Сертификаты</a>
+      <a href="#">Отзывы</a>
+    </div>
+    <div class="footer-col">
+      <h4>Контакты</h4>
+      <a href="tel:+998901234567">+998 90 123-45-67</a>
+      <a href="mailto:info@volo.uz">info@volo.uz</a>
+      <a href="#">г. Ташкент</a>
+      <a href="#">Пн–Сб: 9:00–19:00</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 VOLO HOME · volo.uz · г. Ташкент, Узбекистан</p>
+    <em>SINCE 2019</em>
+  </div>
+</footer>
+
+<!-- ══════════ POPUPS ══════════ -->
+
+<!-- Mattress popup -->
+<div class="popup-overlay" id="popup-mattress" onclick="closePopupOutside(event, 'popup-mattress')">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup('popup-mattress')">✕</button>
+    <div class="popup-eyebrow">Матрасы VOLO HOME</div>
+    <h3>Консультация по матрасам</h3>
+    <p>Наш специалист поможет подобрать идеальный матрас с учётом ваших предпочтений по жёсткости, размеру и бюджету.</p>
+    <ul class="popup-features">
+      <li>Бесплатная консультация с экспертом</li>
+      <li>Тест-драйв матраса в шоуруме</li>
+      <li>Бесплатная доставка по Ташкенту</li>
+      <li>Официальная гарантия на весь срок</li>
+    </ul>
+    <button class="btn-popup" onclick="scrollTo('#form');closePopup('popup-mattress')">Получить консультацию и оформить заказ</button>
+  </div>
+</div>
+
+<!-- Bed popup -->
+<div class="popup-overlay" id="popup-bed" onclick="closePopupOutside(event, 'popup-bed')">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup('popup-bed')">✕</button>
+    <div class="popup-eyebrow">Кровати VOLO HOME</div>
+    <h3>Консультация по кроватям</h3>
+    <p>Мы поможем выбрать кровать, которая идеально впишется в интерьер и обеспечит максимальный комфорт.</p>
+    <ul class="popup-features">
+      <li>Индивидуальный подбор по параметрам</li>
+      <li>Замер и установка в подарок</li>
+      <li>Широкий выбор обивки и материалов</li>
+      <li>Гарантия 2 года на каждую кровать</li>
+    </ul>
+    <button class="btn-popup" onclick="scrollTo('#form');closePopup('popup-bed')">Связаться со специалистом</button>
+  </div>
+</div>
+
+<!-- Promo popup -->
+<div class="popup-overlay" id="popup-promo" onclick="closePopupOutside(event, 'popup-promo')">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup('popup-promo')">✕</button>
+    <div class="popup-eyebrow">Акции и наборы</div>
+    <h3>Выгодный комплект по специальной цене</h3>
+    <p>Количество наборов ограничено. Забронируйте уже сейчас и получите дополнительную скидку при оплате!</p>
+    <ul class="popup-features">
+      <li>Скидка до 25% по сравнению с раздельной покупкой</li>
+      <li>Бесплатная доставка и сборка</li>
+      <li>Подарок: профессиональная чистка 1 раз в год</li>
+      <li>Рассрочка без переплат до 12 месяцев</li>
+    </ul>
+    <button class="btn-popup" onclick="scrollTo('#form');closePopup('popup-promo')">Забронировать набор</button>
+  </div>
+</div>
+
+<!-- Consult popup -->
+<div class="popup-overlay" id="popup-consult" onclick="closePopupOutside(event, 'popup-consult')">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup('popup-consult')">✕</button>
+    <div class="popup-eyebrow">Бесплатная консультация</div>
+    <h3>Подберём идеальное решение для вашей спальни</h3>
+    <p>Оставьте заявку — и наш эксперт свяжется с вами в течение 30 минут в рабочее время.</p>
+    <ul class="popup-features">
+      <li>Консультация совершенно бесплатна</li>
+      <li>Работаем с любым бюджетом</li>
+      <li>Доставка по Ташкенту — 0 сум</li>
+    </ul>
+    <button class="btn-popup" onclick="scrollTo('#form');closePopup('popup-consult')">Оставить заявку →</button>
+  </div>
+</div>
+
+<script>
+  /* ── Popup ── */
+  function openPopup(type) {
+    document.querySelectorAll('.popup-overlay').forEach(p => p.classList.remove('active'));
+    var el = document.getElementById('popup-' + type);
+    if (el) el.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePopup(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  function closePopupOutside(e, id) {
+    if (e.target === document.getElementById(id)) closePopup(id);
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.popup-overlay.active').forEach(function(p) {
+        p.classList.remove('active');
+      });
+      document.body.style.overflow = '';
+    }
+  });
+
+  /* ── Smooth scroll ── */
+  function scrollTo(selector) {
+    var el = document.querySelector(selector);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  /* ── Scroll reveal ── */
+  var revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(function(el) { observer.observe(el); });
+
+  /* ── Nav scroll effect ── */
+  var nav = document.querySelector('nav');
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 60) {
+      nav.style.boxShadow = '0 4px 24px rgba(0,0,0,0.5)';
+    } else {
+      nav.style.boxShadow = 'none';
+    }
+  });
+
+  /* ── Form submit ── */
+  document.querySelector('.btn-submit').addEventListener('click', function() {
+    var inputs = document.querySelectorAll('.field input, .field select');
+    var ok = true;
+    inputs.forEach(function(inp) {
+      if (!inp.value) {
+        inp.style.borderColor = '#E87722';
+        ok = false;
+        setTimeout(function() { inp.style.borderColor = ''; }, 2000);
+      }
+    });
+    if (ok) {
+      this.textContent = '✓ Заявка отправлена!';
+      this.style.background = '#2a9d2a';
+      setTimeout(function() {
+        document.querySelector('.btn-submit').textContent = 'Отправить данные →';
+        document.querySelector('.btn-submit').style.background = '';
+      }, 3000);
+    }
+  });
+</script>
+</body>
+</html>
