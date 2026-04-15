@@ -274,7 +274,8 @@ document.addEventListener('DOMContentLoaded', function() {
   var submitBtn = document.querySelector('.btn-submit');
   if (submitBtn) {
     submitBtn.addEventListener('click', function() {
-      var fields = document.querySelectorAll('.field input, .field select');
+      // ✅ ИСПРАВЛЕНО: ищем поля только внутри секции #form
+      var fields = document.querySelectorAll('#form .field input, #form .field select');
       var ok = true;
 
       fields.forEach(function(inp) {
