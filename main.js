@@ -2,8 +2,12 @@
    VOLO HOME — main.js (Uzbek version)
    ═══════════════════════════════════════════════ */
 
+/* ── CONFIGURATION ── */
 var BOT_TOKEN = '8637686529:AAE7tDyRx4wGyGijbpZhmizlXlv6wv2B2MI';
 var CHAT_ID   = '-5225232338';
+var AMOCRM_DOMAIN = 'your-domain.amocrm.ru';  // Клиент вставляет свой домен (например: volo.amocrm.ru)
+var AMOCRM_TOKEN = 'your-api-token';           // Клиент вставляет свой API токен
+var META_PIXEL_ID = 'your-pixel-id';           // Клиент вставляет свой Meta Pixel ID
 
 /* ── Send to Telegram ── */
 function sendToTelegram(ism, telefon, model, manba) {
@@ -30,6 +34,56 @@ function sendToTelegram(ism, telefon, model, manba) {
       parse_mode: 'HTML'
     })
   }).then(function(res) { return res.json(); });
+}
+
+/* ── Send to amoCRM ── */
+function sendToAmoCRM(ism, telefon, model, manba) {
+  if (!AMOCRM_DOMAIN || AMOCRM_DOMAIN === 'your-domain.amocrm.ru' || 
+      !AMOCRM_TOKEN || AMOCRM_TOKEN === 'your-api-token') {
+    console.warn('amoCRM не настроен. Пропускаем отправку.');
+    return Promise.resolve({ ok: true });
+  }
+
+  var amoUrl = 'https://' + AMOCRM_DOMAIN + '/api/v4/contacts';
+  var contactData = {
+    name: ism,
+    custom_fields_values: [
+      { field_id: 1270170, values: [{ value: telefon }] },
+      { field_id: 1270171, values: [{ value: model }] },
+      { field_id: 1270172, values: [{ value: manba }] }
+    ]
+  };
+
+  return fetch(amoUrl, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + AMOCRM_TOKEN,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(contactData)
+  })
+  .then(function(res) { return res.json(); })
+  .catch(function(err) {
+    console.error('amoCRM ошибка:', err);
+    return { ok: false };
+  });
+}
+
+/* ── Track Meta Pixel ── */
+function trackMetaPixel(ism, telefon, model) {
+  if (!META_PIXEL_ID || META_PIXEL_ID === 'your-pixel-id') {
+    console.warn('Meta Pixel не настроен. Пропускаем отправку.');
+    return;
+  }
+
+  if (typeof fbq !== 'undefined') {
+    fbq('track', 'Lead', {
+      content_name: model,
+      content_type: 'product',
+      currency: 'UZS',
+      value: 0
+    });
+  }
 }
 
 /* ── Popup open/close ── */
@@ -104,23 +158,19 @@ function submitPopupForm(popupId, modelName) {
   btn.textContent = '\u23F3 Yuborilmoqda...';
   btn.disabled = true;
 
-  sendToTelegram(name, phone, modelName, 'Popup — ' + modelName)
-    .then(function(data) {
-      if (data.ok) {
-        popup.querySelector('.popup-form-wrap').style.display = 'none';
-        popup.querySelector('.popup-success').style.display = 'block';
-        setTimeout(function() { closePopup('popup-' + popupId); }, 3000);
-      } else {
-        btn.textContent = '\u274C Xatolik';
-        btn.style.background = '#cc0000';
-        btn.disabled = false;
-        setTimeout(function() {
-          btn.textContent = 'Buyurtma berish \u2192';
-          btn.style.background = '';
-        }, 3000);
-      }
-    })
-    .catch(function() {
+  var source = 'Popup — ' + modelName;
+
+  Promise.all([
+    sendToTelegram(name, phone, modelName, source),
+    sendToAmoCRM(name, phone, modelName, source)
+  ])
+  .then(function(results) {
+    trackMetaPixel(name, phone, modelName);
+    if (results[0].ok || results[1].ok) {
+      popup.querySelector('.popup-form-wrap').style.display = 'none';
+      popup.querySelector('.popup-success').style.display = 'block';
+      setTimeout(function() { closePopup('popup-' + popupId); }, 3000);
+    } else {
       btn.textContent = '\u274C Xatolik';
       btn.style.background = '#cc0000';
       btn.disabled = false;
@@ -128,7 +178,17 @@ function submitPopupForm(popupId, modelName) {
         btn.textContent = 'Buyurtma berish \u2192';
         btn.style.background = '';
       }, 3000);
-    });
+    }
+  })
+  .catch(function() {
+    btn.textContent = '\u274C Xatolik';
+    btn.style.background = '#cc0000';
+    btn.disabled = false;
+    setTimeout(function() {
+      btn.textContent = 'Buyurtma berish \u2192';
+      btn.style.background = '';
+    }, 3000);
+  });
 }
 
 /* ── Consult popup (hero button) ── */
@@ -146,34 +206,40 @@ function submitConsult() {
   btn.textContent = '\u23F3 Yuborilmoqda...';
   btn.disabled = true;
 
-  sendToTelegram(name, phone, interest, 'Konsultatsiya popup')
-    .then(function(data) {
-      if (data.ok) {
-        document.getElementById('consult-form-wrap').style.display = 'none';
-        document.getElementById('consult-success').style.display = 'block';
+  var source = 'Konsultatsiya popup';
+
+  Promise.all([
+    sendToTelegram(name, phone, interest, source),
+    sendToAmoCRM(name, phone, interest, source)
+  ])
+  .then(function(results) {
+    trackMetaPixel(name, phone, interest);
+    if (results[0].ok || results[1].ok) {
+      document.getElementById('consult-form-wrap').style.display = 'none';
+      document.getElementById('consult-success').style.display = 'block';
+      setTimeout(function() {
+        closePopup('popup-consult');
         setTimeout(function() {
-          closePopup('popup-consult');
-          setTimeout(function() {
-            document.getElementById('consult-form-wrap').style.display = 'block';
-            document.getElementById('consult-success').style.display = 'none';
-            document.getElementById('consult-name').value = '';
-            document.getElementById('consult-phone').value = '';
-            document.getElementById('consult-interest').value = '';
-            btn.textContent = "Ma'lumotlarni yuborish \u2192";
-            btn.disabled = false;
-          }, 400);
-        }, 3000);
-      } else {
-        alert("Xatolik yuz berdi, qayta urinib ko'ring.");
-        btn.textContent = "Ma'lumotlarni yuborish \u2192";
-        btn.disabled = false;
-      }
-    })
-    .catch(function() {
+          document.getElementById('consult-form-wrap').style.display = 'block';
+          document.getElementById('consult-success').style.display = 'none';
+          document.getElementById('consult-name').value = '';
+          document.getElementById('consult-phone').value = '';
+          document.getElementById('consult-interest').value = '';
+          btn.textContent = "Ma'lumotlarni yuborish \u2192";
+          btn.disabled = false;
+        }, 400);
+      }, 3000);
+    } else {
       alert("Xatolik yuz berdi, qayta urinib ko'ring.");
       btn.textContent = "Ma'lumotlarni yuborish \u2192";
       btn.disabled = false;
-    });
+    }
+  })
+  .catch(function() {
+    alert("Xatolik yuz berdi, qayta urinib ko'ring.");
+    btn.textContent = "Ma'lumotlarni yuborish \u2192";
+    btn.disabled = false;
+  });
 }
 
 /* ── Smooth scroll ── */
@@ -350,14 +416,19 @@ document.addEventListener('DOMContentLoaded', function() {
       submitBtn.textContent = '\u23F3 Yuborilmoqda...';
       submitBtn.disabled = true;
 
-      fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'HTML' })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.ok) {
+      var source = 'Pastki forma';
+
+      Promise.all([
+        fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'HTML' })
+        }).then(function(r) { return r.json(); }),
+        sendToAmoCRM(ism, telefon, mahsulot, source)
+      ])
+      .then(function(results) {
+        trackMetaPixel(ism, telefon, mahsulot);
+        if (results[0].ok || results[1].ok) {
           submitBtn.textContent = '\u2713 Ariza yuborildi!';
           submitBtn.style.background = '#2a9d2a';
           fields.forEach(function(f) { f.value = ''; });
