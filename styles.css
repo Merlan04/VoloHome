@@ -301,6 +301,8 @@ nav {
   height: 420px;
   object-fit: cover;
   display: block;
+  background: #2C2C2C;
+  min-height: 420px;
 }
 .hero-float-badge {
   position: absolute;
@@ -382,11 +384,22 @@ nav {
 }
 .see-all-btn:hover { gap: 12px; }
 
+/* ── Cards Scroll Wrapper ── */
+.cards-scroll-wrapper {
+  position: relative;
+}
+
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
+
+/* Mattress section has 5 items — show 4+1 on desktop */
+#mattress-grid {
+  grid-template-columns: repeat(5, 1fr);
+}
+
 .card {
   position: relative;
   overflow: hidden;
@@ -405,7 +418,11 @@ nav {
   position: relative;
   height: 200px;
   overflow: hidden;
+  background: #3a3a3a;
 }
+.card-light .card-img-wrap { background: #eee; }
+.card-promo .card-img-wrap { background: #f5e8d8; }
+
 .card-img-wrap img {
   width: 100%;
   height: 100%;
@@ -443,9 +460,16 @@ nav {
 .card-sub {
   font-size: 12px;
   color: var(--muted);
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+.card-desc-short {
+  font-size: 11px;
+  color: #aaa;
   margin-bottom: 12px;
   line-height: 1.5;
 }
+.card-light .card-desc-short { color: #888; }
 .card-price {
   font-size: 15px;
   font-weight: 900;
@@ -466,12 +490,30 @@ nav {
   transition: background 0.2s, transform 0.15s;
 }
 .btn-card:hover { background: #d46a1a; transform: scale(0.98); }
-.btn-card.outline {
-  background: transparent;
-  border: 1.5px solid var(--orange);
-  color: var(--orange);
+
+/* Scroll dots */
+.scroll-dots {
+  display: none;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
 }
-.btn-card.outline:hover { background: var(--orange); color: #fff; }
+.scroll-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  border: none;
+  padding: 0;
+}
+.sec-light .scroll-dot,
+.sec-gray .scroll-dot { background: rgba(0,0,0,0.2); }
+.scroll-dot.active {
+  background: var(--orange);
+  transform: scale(1.25);
+}
 
 .sec { padding: 70px 60px; }
 .sec-dark { background: var(--dark); }
@@ -490,6 +532,8 @@ nav {
   height: 480px;
   object-fit: cover;
   display: block;
+  background: #2C2C2C;
+  min-height: 480px;
 }
 .about-accent {
   position: absolute;
