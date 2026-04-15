@@ -133,6 +133,7 @@ document.addEventListener('keydown', function(e) {
 });
 
 /* ── Submit from product popup (mattress / bed) ── */
+submitPopupForm/* ── Submit from product popup (mattress / bed) ── */
 function submitPopupForm(popupId, modelName) {
   var popup    = document.getElementById('popup-' + popupId);
   var nameInp  = popup.querySelector('.popup-input-name');
@@ -167,8 +168,19 @@ function submitPopupForm(popupId, modelName) {
   .then(function(results) {
     trackMetaPixel(name, phone, modelName);
     if (results[0].ok || results[1].ok) {
+      // Показываем сообщение об успехе
       popup.querySelector('.popup-form-wrap').style.display = 'none';
-      popup.querySelector('.popup-success').style.display = 'block';
+      var successMsg = popup.querySelector('.popup-success');
+      if (!successMsg) {
+        // Если элемента нет, создаём его
+        successMsg = document.createElement('div');
+        successMsg.className = 'popup-success';
+        successMsg.innerHTML = '<p style="text-align: center; color: #2a9d2a; font-size: 16px; font-weight: bold;">✓ Ariza yuborildi!<br><span style="font-size: 13px; color: var(--muted);">Biz tez orada bog\'lanamiz</span></p>';
+        popup.querySelector('.popup-box').appendChild(successMsg);
+      }
+      successMsg.style.display = 'block';
+      
+      // Закрываем попап через 3 секунды
       setTimeout(function() { closePopup('popup-' + popupId); }, 3000);
     } else {
       btn.textContent = '\u274C Xatolik';
