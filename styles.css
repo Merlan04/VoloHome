@@ -384,7 +384,6 @@ nav {
 }
 .see-all-btn:hover { gap: 12px; }
 
-/* ── Cards Scroll Wrapper ── */
 .cards-scroll-wrapper {
   position: relative;
 }
@@ -395,7 +394,6 @@ nav {
   gap: 20px;
 }
 
-/* Mattress section has 5 items — show 4+1 on desktop */
 #mattress-grid {
   grid-template-columns: repeat(5, 1fr);
 }
@@ -491,7 +489,6 @@ nav {
 }
 .btn-card:hover { background: #d46a1a; transform: scale(0.98); }
 
-/* Scroll dots */
 .scroll-dots {
   display: none;
   justify-content: center;
@@ -742,6 +739,7 @@ footer {
   font-size: 11px;
 }
 
+/* ── POPUPS ── */
 .popup-overlay {
   position: fixed;
   inset: 0;
@@ -752,22 +750,26 @@ footer {
   z-index: 999;
   pointer-events: none;
   transition: background 0.3s;
+  padding: 20px;
+  box-sizing: border-box;
 }
 .popup-overlay.active {
   background: rgba(0,0,0,0.8);
   pointer-events: all;
   animation: overlayFade 0.3s ease;
 }
+
 .popup-box {
   background: var(--dark);
   border-top: 4px solid var(--orange);
   padding: 42px;
   max-width: 460px;
-  width: 90%;
+  width: 100%;
   position: relative;
   opacity: 0;
   transform: scale(0.85) translateY(30px);
   transition: opacity 0.35s cubic-bezier(.22,1,.36,1), transform 0.35s cubic-bezier(.22,1,.36,1);
+  box-sizing: border-box;
 }
 .popup-overlay.active .popup-box {
   opacity: 1;
@@ -895,7 +897,7 @@ footer {
   margin-top: 10px;
   margin-bottom: 0;
 }
--->
+
 .orange-divider {
   height: 4px;
   background: linear-gradient(to right, var(--orange), var(--orange-dark));
